@@ -13,7 +13,7 @@
         -   URL
         -   The whole request body (if applicable)
         -   The whole response body (or as much as your screen can show)
-4.  Project zip (`adminNum-fullName-class.zip`)
+4.  Project zip (`adminNum-fullName-class.zip` i.e. `p1111111-John Doe-1B01.zip` )
     -   Source code
     -   `package.json` and `package.lock.json`
     -   The `node_modules` folder **MUST NOT** to be inside the zip
