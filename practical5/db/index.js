@@ -169,9 +169,9 @@ const users = {
             }
 
             const sql = `
-                DELETE FROM friendship 
-                WHERE fk_friend_one_id in (?, ?)
-                AND fk_friend_two_id in (?, ?)
+                DELETE FROM Friendship 
+                WHERE fk_friend_one_id IN (?, ?)
+                AND fk_friend_two_id IN (?, ?)
             `
 
             conn.query(sql, [user1Id, user2Id, user2Id, user1Id], function(
