@@ -80,7 +80,7 @@ app.post('/login', function(req, res) {
 })
 
 app.post('/testToken', verifyToken, function(req, res) {
-    res.send('success')
+    res.send(`${req.username} has id ${req.id}`)
 })
 
 app.listen(port, function() {

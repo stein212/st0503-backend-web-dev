@@ -14,7 +14,7 @@ const users = {
                 return
             }
 
-            const sql = 'SELECT password FROM User WHERE username = ?'
+            const sql = 'SELECT id, password FROM User WHERE username = ?'
 
             conn.query(sql, [username], function(err, results) {
                 conn.end()
