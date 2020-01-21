@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const user = require('./models/user')
 const verifyToken = require('./auth/verifyToken')
 
-const port = 3000
+const port = 3001
 
 app.use(bodyParser.json())
 app.use(
