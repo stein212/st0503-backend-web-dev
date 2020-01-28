@@ -1,4 +1,5 @@
 const db = require('../data')
+const verifyToken = require('../auth/verifyToken')
 
 const usersController = {
     init(app) {
@@ -55,6 +56,68 @@ const usersController = {
                 }
 
                 res.json(users)
+            })
+        })
+
+        app.put('/api/users', verifyToken, function(req, res) {
+            const { userId } = req
+
+            db.users.update(userId, req.body.name, function(err, affectedRows) {
+                if (err) {
+                    res.status(500)
+                    res.json({
+                        code: err.code,
+                        message: err.message,
+                    })
+
+                    return
+                }
+
+                res.status(204)
+                res.send()
+            })
+        })
+
+        app.put('/api/updatePassword', verifyToken, function(req, res) {
+            const { userId } = req
+            db.users.updatePassword(
+                userId,
+                req.body.oldPassword,
+                req.body.newPassword,
+                function(err, affectedRows) {
+                    if (err) {
+                        res.status(500)
+                        res.json({
+                            code: err.code,
+                            message: err.message,
+                        })
+
+                        return
+                    }
+
+                    res.status(204)
+                    res.send()
+                }
+            )
+        })
+
+        app.delete('/api/users', verifyToken, function(req, res) {
+            // const userId = req.userId
+            const { userId } = req
+
+            db.users.delete(userId, function(err, affectedRows) {
+                if (err) {
+                    res.status(500)
+                    res.json({
+                        code: err.code,
+                        message: err.message,
+                    })
+
+                    return
+                }
+
+                res.status(204)
+                res.send()
             })
         })
 

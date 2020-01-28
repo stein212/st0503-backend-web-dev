@@ -103,6 +103,179 @@ const usersDb = {
             })
         })
     },
+    update(id, name, callback) {
+        const conn = dbconnect.getConnection()
+
+        conn.connect(function(err) {
+            if (err) {
+                callback(
+                    {
+                        code: 'unknown',
+                        message: 'An unknown error occured',
+                        inner: err,
+                    },
+                    null
+                )
+                return
+            }
+
+            const sql = `
+                UPDATE Users
+                SET name = ?
+                WHERE id = ?
+            `
+
+            conn.query(sql, [name, id], function(err, results) {
+                conn.end()
+
+                if (err) {
+                    callback(
+                        {
+                            code: 'unknown',
+                            message: 'An unknown error occured',
+                            inner: err,
+                        },
+                        null
+                    )
+                    return
+                }
+
+                callback(null, results.affectedRows)
+            })
+        })
+    },
+    updatePassword(id, oldPassword, newPassword, callback) {
+        const conn = dbconnect.getConnection()
+
+        conn.connect(function(err) {
+            if (err) {
+                callback(
+                    {
+                        code: 'unknown',
+                        message: 'An unknown error occured',
+                        inner: err,
+                    },
+                    null
+                )
+                return
+            }
+
+            // get currentPassword hash
+            const getPasswordSql = `
+                SELECT password FROM Users
+                WHERE id = ?
+            `
+
+            conn.query(getPasswordSql, [id], function(err, results) {
+                if (err) {
+                    callback(
+                        {
+                            code: 'unknown',
+                            message: 'An unknown error occured',
+                            inner: err,
+                        },
+                        null
+                    )
+                    return
+                }
+
+                const passwordHash = results[0].password
+
+                // check oldPassword
+                bcrypt
+                    .compare(oldPassword, passwordHash)
+                    .then(function(isValidPassword) {
+                        if (!isValidPassword) {
+                            callback(
+                                {
+                                    code: 'invalid-credentials',
+                                    message:
+                                        'The credentials given are invalid',
+                                },
+                                null
+                            )
+                            return
+                        }
+
+                        // hash new password
+                        bcrypt
+                            .hash(newPassword, saltRounds)
+                            .then(function(newPasswordHash) {
+                                // write sql
+                                const updatePasswordSql = `
+                                    UPDATE Users
+                                    SET password = ?
+                                    WHERE id = ?
+                                `
+
+                                // run the sql query
+                                conn.query(
+                                    updatePasswordSql,
+                                    [newPasswordHash, id],
+                                    function(err, results) {
+                                        conn.end()
+
+                                        if (err) {
+                                            callback(
+                                                {
+                                                    code: 'unknown',
+                                                    message:
+                                                        'An unknown error occured',
+                                                    inner: err,
+                                                },
+                                                null
+                                            )
+                                            return
+                                        }
+
+                                        callback(null, results.affectedRows)
+                                    }
+                                )
+                            })
+                    })
+            })
+        })
+    },
+    delete(id, callback) {
+        const conn = dbconnect.getConnection()
+
+        conn.connect(function(err) {
+            if (err) {
+                callback(
+                    {
+                        code: 'unknown',
+                        message: 'An unknown error occured',
+                        inner: err,
+                    },
+                    null
+                )
+                return
+            }
+
+            const sql = `
+                DELETE FROM Users
+                WHERE id = ?
+            `
+
+            conn.query(sql, [id], function(err, results) {
+                conn.end()
+
+                if (err) {
+                    callback(
+                        {
+                            code: 'unknown',
+                            message: 'An unknown error occured',
+                            inner: err,
+                        },
+                        null
+                    )
+                    return
+                }
+
+                callback(null, results.affectedRows)
+            })
+        })
+    },
 
     login(username, password, callback) {
         const conn = dbconnect.getConnection()
