@@ -59,6 +59,25 @@ const usersController = {
             })
         })
 
+        app.get('/api/users/:userId', function(req, res) {
+            const userId = req.params.userId
+
+            db.users.getById(userId, function(err, user) {
+                if (err) {
+                    res.status(500)
+                    res.json({
+                        code: err.code,
+                        message: err.message,
+                    })
+                    return
+                }
+
+                delete user.password
+
+                res.json(user)
+            })
+        })
+
         app.put('/api/users', verifyToken, function(req, res) {
             const { userId } = req
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Login Page</h1>
+
+        <form id="loginForm" action="">
+            <label for="">Username</label>
+            <input id="usernameInput" type="text" />
+
+            <label for="">Password</label>
+            <input id="passwordInput" type="password" />
+
+            <button>Login</button>
+        </form>
+
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            // get all the elements for login
+            const loginForm = $('#loginForm')
+            const usernameInput = $('#usernameInput')
+            const passwordInput = $('#passwordInput')
+
+            // handle on form submit
+            loginForm.on('submit', function(e) {
+                e.preventDefault()
+
+                const payload = {
+                    username: usernameInput.val(),
+                    password: passwordInput.val(),
+                }
+
+                axios
+                    .post('http://localhost:3000/api/login', payload)
+                    .then(function(res) {
+                        localStorage.setItem(
+                            'accessToken',
+                            res.data.accessToken
+                        )
+
+                        // base64 decode the payload of jwt
+                        const claimsString = atob(
+                            res.data.accessToken.split('.')[1]
+                        )
+
+                        // parse into json
+                        const claims = JSON.parse(claimsString)
+
+                        // use the userId in the payload to get user data
+                        axios
+                            .get(
+                                `http://localhost:3000/api/users/${claims.userId}`
+                            )
+                            .then(function(res) {
+                                // save the user data into localStorage
+                                localStorage.setItem(
+                                    'user',
+                                    JSON.stringify(res.data)
+                                )
+
+                                // navigate back to index.html
+                                window.location.assign('/index.html')
+                            })
+                    })
+            })
+        </script>
+    </body>
+</html>

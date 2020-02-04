@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Chapter 9</title>
+    </head>
+    <body>
+        <p>Register</p>
+
+        <form id="registerForm">
+            <label for="">Username</label>
+            <input id="usernameInput" type="text" name="username" />
+
+            <label for="">Name</label>
+            <input id="nameInput" type="text" name="name" />
+
+            <label for="">Password</label>
+            <input id="passwordInput" type="text" name="password" />
+
+            <button>Register</button>
+        </form>
+
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            const registerForm = $('#registerForm')
+            const usernameInput = $('#usernameInput')
+            const nameInput = $('#nameInput')
+            const passwordInput = $('#passwordInput')
+
+            registerForm.on('submit', function(e) {
+                // stop it from submiting the form
+                e.preventDefault()
+
+                const payload = {
+                    username: usernameInput.val(),
+                    name: nameInput.val(),
+                    password: passwordInput.val(),
+                }
+
+                axios
+                    .post('http://localhost:3000/api/users', payload)
+                    .then(function(res) {
+                        // successfully registered
+                        alert('Successfully register')
+                        window.location.assign('/index.html')
+                    })
+                    .catch(function(e) {
+                        // not successfully registered
+                        alert(e.response.data.message)
+                    })
+            })
+        </script>
+    </body>
+</html>

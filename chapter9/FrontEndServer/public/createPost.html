@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Chapter 9</title>
+    </head>
+    <body>
+        <p>Create new Post</p>
+
+        <form id="createPostForm">
+            <label for="">Title</label>
+            <input id="titleInput" type="text" name="title" />
+
+            <label for="">Body</label>
+            <input id="bodyInput" type="text" name="body" />
+
+            <label for="">Image</label>
+            <input id="postImageInput" type="file" name="postImage" />
+
+            <button>Create</button>
+        </form>
+
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="js/site.js"></script>
+        <script>
+            const createPostForm = $('#createPostForm')
+            const titleInput = $('#titleInput')
+            const bodyInput = $('#bodyInput')
+            const postImageInput = $('#postImageInput')
+
+            createPostForm.on('submit', function(e) {
+                // stop it from submiting the form
+                e.preventDefault()
+
+                const payload = new FormData()
+                payload.set('title', titleInput.val())
+                payload.set('body', bodyInput.val())
+                payload.append('postImage', postImageInput[0].files[0])
+
+                const headers = {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization:
+                        'Bearer ' + localStorage.getItem('accessToken'),
+                }
+
+                axios
+                    .post('http://localhost:3000/api/posts', payload, {
+                        headers,
+                    })
+                    .then(function(res) {
+                        // successfully registered
+                        alert('Successfully created a post')
+                        window.location.assign('/index.html')
+                    })
+                    .catch(function(e) {
+                        // not successfully registered
+                        alert(e.response.data.message)
+                    })
+            })
+        </script>
+    </body>
+</html>

@@ -103,6 +103,57 @@ const usersDb = {
             })
         })
     },
+    getById(userId, callback) {
+        const conn = dbconnect.getConnection()
+
+        conn.connect(function(err) {
+            if (err) {
+                callback(
+                    {
+                        code: 'unknown',
+                        message: 'An unknown error occured',
+                        inner: err,
+                    },
+                    null
+                )
+                return
+            }
+
+            const sql = `
+                SELECT * FROM Users WHERE id = ?
+            `
+
+            conn.query(sql, [userId], function(err, results) {
+                conn.end()
+
+                if (err) {
+                    callback(
+                        {
+                            code: 'unknown',
+                            message: 'An unknown error occured',
+                            inner: err,
+                        },
+                        null
+                    )
+                    return
+                }
+
+                if (results.length !== 1) {
+                    callback(
+                        {
+                            code: 'not found',
+                            message: `No user by ${userId} found`,
+                            inner: err,
+                        },
+                        null
+                    )
+                    return
+                }
+
+                callback(null, results[0])
+            })
+        })
+    },
     update(id, name, callback) {
         const conn = dbconnect.getConnection()
 

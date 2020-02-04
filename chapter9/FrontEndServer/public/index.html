@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Chapter 9</title>
+    </head>
+    <body>
+        <p>Home Page</p>
+
+        <p id="userIdText">Please Login</p>
+
+        <a href="./login.html">Login</a>
+        <a href="./register.html">Register</a>
+        <a href="./createPost.html">Create new Post</a>
+        <button onclick="logout()">Logout</button>
+
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <script src="js/site.js"></script>
+        <script>
+            const userIdText = $('#userIdText')
+
+            const accessToken = localStorage.getItem('accessToken')
+
+            if (accessToken) {
+                const user = JSON.parse(localStorage.getItem('user'))
+                userIdText.text('hi ' + user.username)
+            }
+        </script>
+    </body>
+</html>
